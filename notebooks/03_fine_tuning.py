@@ -189,7 +189,6 @@ training_args = SFTConfig(
 
     # SFT-specific
     dataset_text_field="text",
-    max_seq_length=MAX_SEQ_LENGTH,
     packing=True,
 )
 
