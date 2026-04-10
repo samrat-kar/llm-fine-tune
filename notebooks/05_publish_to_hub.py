@@ -107,6 +107,13 @@ with open(f"{RESULTS_DIR}/finetuned_results.json") as f:
 mmlu_path = f"{RESULTS_DIR}/finetuned_mmlu_results.json"
 mmlu = json.load(open(mmlu_path)) if os.path.exists(mmlu_path) else {"overall_accuracy": "N/A"}
 
+# Pre-compute MMLU values to avoid f-string brace issues
+_per_subject = mmlu.get("per_subject", {})
+_mmlu_math   = _per_subject.get("high_school_mathematics", "N/A")
+_mmlu_sec    = _per_subject.get("computer_security", "N/A")
+_mmlu_moral  = _per_subject.get("moral_scenarios", "N/A")
+_mmlu_overall = mmlu.get("overall_accuracy", "N/A")
+
 model_card = f"""---
 language: en
 license: apache-2.0
@@ -192,10 +199,10 @@ Experiment tracking: [Weights & Biases](https://wandb.ai)
 
 | Subject | Accuracy |
 |---------|----------|
-| High School Mathematics | {mmlu.get('per_subject', {{}}).get('high_school_mathematics', 'N/A')} |
-| Computer Security | {mmlu.get('per_subject', {{}}).get('computer_security', 'N/A')} |
-| Moral Scenarios | {mmlu.get('per_subject', {{}}).get('moral_scenarios', 'N/A')} |
-| **Overall** | **{mmlu.get('overall_accuracy', 'N/A')}** |
+| High School Mathematics | {_mmlu_math} |
+| Computer Security | {_mmlu_sec} |
+| Moral Scenarios | {_mmlu_moral} |
+| **Overall** | **{_mmlu_overall}** |
 
 The MMLU scores confirm general capability is retained after fine-tuning.
 
