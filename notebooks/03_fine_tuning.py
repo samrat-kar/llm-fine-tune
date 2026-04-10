@@ -171,7 +171,7 @@ training_args = TrainingArguments(
 
     # Logging & saving
     logging_steps=LOGGING_STEPS,
-    evaluation_strategy="steps",
+    eval_strategy="steps",
     eval_steps=EVAL_STEPS,
     save_strategy="steps",
     save_steps=SAVE_STEPS,
