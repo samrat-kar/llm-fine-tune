@@ -90,7 +90,7 @@ print("Saved locally.")
 
 # %%
 print(f"Pushing to Hub: {HF_REPO_ID}...")
-merged_model.push_to_hub(HF_REPO_ID, safe_serialization=True, private=False)
+merged_model.push_to_hub(HF_REPO_ID, private=False)
 tokenizer.push_to_hub(HF_REPO_ID)
 print(f"Model published at: https://huggingface.co/{HF_REPO_ID}")
 
