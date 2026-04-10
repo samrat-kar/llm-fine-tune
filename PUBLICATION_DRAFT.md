@@ -1,8 +1,7 @@
-# Fine-Tuning Qwen2.5-1.5B for Text-to-SQL with QLoRA
 
-**Publication type**: Academic Solution Showcase  
-**Author**: samratkar77  
-**Date**: April 2026
+**Tags**: `fine-tuning` `qlora` `text-to-sql` `qwen2.5` `peft` `llm` `natural-language-processing` `sql-generation` `huggingface` `transformers` `weights-and-biases` `parameter-efficient-fine-tuning` `apache-2.0`
+
+**GitHub**: https://github.com/samrat-kar/llm-fine-tune
 
 ---
 
@@ -100,6 +99,8 @@ Each row contains three fields:
 ---
 
 ## 3. Methodology
+
+![Fine-tuning overview](Finetune.png)
 
 ### 3.1 Base model selection
 
