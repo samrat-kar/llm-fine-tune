@@ -33,10 +33,9 @@ from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     BitsAndBytesConfig,
-    TrainingArguments,
 )
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
-from trl import SFTTrainer
+from trl import SFTTrainer, SFTConfig
 
 from src.config import (
     # model
@@ -148,7 +147,7 @@ print(f"\nSample formatted text:\n{dataset['train'][0]['text'][:500]}")
 # ## 6. Training arguments
 
 # %%
-training_args = TrainingArguments(
+training_args = SFTConfig(
     output_dir=OUTPUT_DIR,
     num_train_epochs=NUM_TRAIN_EPOCHS,
 
@@ -187,6 +186,11 @@ training_args = TrainingArguments(
     # Misc
     dataloader_num_workers=0,
     seed=42,
+
+    # SFT-specific
+    dataset_text_field="text",
+    max_seq_length=MAX_SEQ_LENGTH,
+    packing=True,
 )
 
 # %% [markdown]
@@ -200,13 +204,10 @@ training_args = TrainingArguments(
 # %%
 trainer = SFTTrainer(
     model=model,
-    tokenizer=tokenizer,
+    processing_class=tokenizer,
     args=training_args,
     train_dataset=dataset["train"],
     eval_dataset=dataset["validation"],
-    dataset_text_field="text",
-    max_seq_length=MAX_SEQ_LENGTH,
-    packing=True,    # packs multiple short examples into one sequence
 )
 
 # %%
