@@ -1,3 +1,5 @@
+![Fine-tuning overview](https://raw.githubusercontent.com/samrat-kar/llm-fine-tune/main/Finetune.png)
+
 
 **Tags**: `fine-tuning` `qlora` `text-to-sql` `qwen2.5` `peft` `llm` `natural-language-processing` `sql-generation` `huggingface` `transformers` `weights-and-biases` `parameter-efficient-fine-tuning` `apache-2.0`
 
@@ -100,7 +102,6 @@ Each row contains three fields:
 
 ## 3. Methodology
 
-![Fine-tuning overview](Finetune.png)
 
 ### 3.1 Base model selection
 
