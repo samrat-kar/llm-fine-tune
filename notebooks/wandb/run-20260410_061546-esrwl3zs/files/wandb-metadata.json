@@ -1,0 +1,40 @@
+{
+  "os": "Linux-6.5.0-28-generic-x86_64-with-glibc2.35",
+  "python": "CPython 3.11.10",
+  "startedAt": "2026-04-10T06:15:46.281123Z",
+  "program": "/workspace/llm-fine-tune/notebooks/03_fine_tuning.py",
+  "codePath": "notebooks/03_fine_tuning.py",
+  "codePathLocal": "03_fine_tuning.py",
+  "git": {
+    "remote": "https://github.com/samrat-kar/llm-fine-tune.git",
+    "commit": "2557c537cdaad5ee7a24845463fc19a271edb3c1"
+  },
+  "email": "samratkar77@gmail.com",
+  "root": "/workspace/llm-fine-tune/notebooks",
+  "host": "a9c731e7f8eb",
+  "executable": "/usr/bin/python",
+  "cpu_count": 104,
+  "cpu_count_logical": 208,
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "21474836480",
+      "used": "11186364416"
+    }
+  },
+  "memory": {
+    "total": "2164130975744"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA H100 80GB HBM3",
+      "memoryTotal": "85520809984",
+      "cudaCores": 16896,
+      "architecture": "Hopper",
+      "uuid": "GPU-8d2e37dc-4e3b-a188-e732-4e5bf16262ca"
+    }
+  ],
+  "cudaVersion": "12.7",
+  "writerId": "fohgaokba3ev1u3i3xl59n17xctm2ebo"
+}
