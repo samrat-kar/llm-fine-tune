@@ -1,0 +1,7 @@
+{
+  "label": "fine-tuned",
+  "n_samples": 500,
+  "rouge_l_mean": 0.9856205794989614,
+  "rouge_l_std": 0.04309312198061374,
+  "exact_match": 0.754
+}

@@ -1,0 +1,7 @@
+{
+  "label": "baseline",
+  "n_samples": 500,
+  "rouge_l_mean": 0.878423697162905,
+  "rouge_l_std": 0.12706538793503613,
+  "exact_match": 0.0
+}

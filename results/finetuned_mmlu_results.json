@@ -1,0 +1,8 @@
+{
+  "overall_accuracy": 0.48,
+  "per_subject": {
+    "high_school_mathematics": 0.36,
+    "computer_security": 0.76,
+    "moral_scenarios": 0.32
+  }
+}

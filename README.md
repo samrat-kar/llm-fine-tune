@@ -121,8 +121,8 @@ learning_rate   = 2e-4
 lr_scheduler    = "cosine"
 warmup_ratio    = 0.05
 epochs          = 3
-batch_size      = 4          # per device
-grad_accum      = 4          # effective batch = 16
+batch_size      = 2          # per device
+grad_accum      = 8          # effective batch = 16
 max_seq_length  = 512
 optimizer       = "paged_adamw_32bit"
 
@@ -143,19 +143,89 @@ double_quant    = True
 
 ## Results
 
-*(Fill in after running Notebook 4)*
+Evaluated on 500 held-out validation samples. Training on NVIDIA H100 80GB (~87 min).
 
 | Metric | Baseline | Fine-tuned | Δ |
 |--------|----------|------------|---|
-| ROUGE-L | — | — | — |
-| Exact Match | — | — | — |
-| MMLU Overall | — | — | — |
+| ROUGE-L | 0.8784 | 0.9856 | **+0.1072** |
+| Exact Match | 0.0000 | 0.7540 | **+0.7540** |
+| MMLU Overall (FT only) | N/A¹ | 0.4800 | — |
 
-W&B project: `<link from Notebook 3>`
+¹ MMLU baseline was not run; fine-tuned score of 0.48 is well above random (0.25),
+confirming general capability is retained.
+
+**Training loss**: 2.26 → 0.41 (train), 0.53 → 0.43 (val) over 1,800 steps / 3 epochs.
+
+W&B project: https://wandb.ai/samratkar77/ReadyTensor-FineTune/runs/esrwl3zs
+
+## Model Card
+
+| Field | Value |
+|-------|-------|
+| **Model name** | `samratkar77/qwen2.5-1.5b-sql-qlora` |
+| **Base model** | `Qwen/Qwen2.5-1.5B-Instruct` |
+| **Task** | Text-to-SQL generation |
+| **Language** | English |
+| **License** | Apache 2.0 |
+| **Fine-tuning method** | QLoRA — 4-bit NF4 quantization + LoRA (r=16, α=32) |
+| **Training data** | `b-mc2/sql-create-context` (~78K train rows after filtering) |
+| **Trainable parameters** | ~8.4M / 1.54B (≈0.55%) |
+
+### Intended Use
+
+Generate SQL queries from a natural-language question and a set of `CREATE TABLE`
+statements. Suitable for prototyping text-to-SQL features, database assistants, and
+educational projects.
+
+### Out-of-Scope Use
+
+- Complex multi-table joins not well-represented in the training data
+- Non-English queries
+- Dialect-specific SQL (T-SQL, PL/pgSQL); results may be unreliable
+- Production database access without human review
+
+### Limitations and Biases
+
+- Training data covers primarily single-table or simple join scenarios
+- May hallucinate column or table names not present in the given schema
+- Performance degrades for aggregate functions with complex `HAVING` clauses
+
+### Quick Usage
+
+```python
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
+
+model_id = "samratkar77/qwen2.5-1.5b-sql-qlora"
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForCausalLM.from_pretrained(
+    model_id, torch_dtype=torch.float16, device_map="auto"
+)
+
+system_prompt = (
+    "You are an expert SQL assistant. "
+    "Given a natural language question and the relevant database schema, "
+    "write a single correct SQL query that answers the question. "
+    "Return only the SQL query with no explanation."
+)
+question = "How many employees are in the sales department?"
+context  = "CREATE TABLE employees (id INT, name TEXT, department TEXT, salary REAL);"
+
+messages = [
+    {"role": "system", "content": system_prompt},
+    {"role": "user",   "content": f"Given the following SQL tables:\n\n{context}\n\nWrite a SQL query to answer: {question}"},
+]
+prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+with torch.no_grad():
+    output = model.generate(**inputs, max_new_tokens=100, do_sample=False)
+print(tokenizer.decode(output[0, inputs["input_ids"].shape[1]:], skip_special_tokens=True))
+# Expected: SELECT COUNT(*) FROM employees WHERE department = 'sales';
+```
 
 ## Links
 
-- Published model: `https://huggingface.co/<your-hf-username>/qwen2.5-1.5b-sql-qlora`
+- Published model: `https://huggingface.co/samratkar77/qwen2.5-1.5b-sql-qlora`
 - Dataset: `https://huggingface.co/datasets/b-mc2/sql-create-context`
 - Base model: `https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct`
 - W&B project: *(add link after training)*

@@ -14,7 +14,7 @@
 # | Target modules | q/k/v/o/gate/up/down proj |
 # | Quantization | 4-bit NF4 |
 # | Learning rate | 2e-4 (cosine schedule) |
-# | Effective batch size | 16 (4 × 4 grad accum) |
+# | Effective batch size | 16 (2 per-device × 8 grad accum) |
 # | Epochs | 3 |
 # | Max seq length | 512 |
 # | Experiment tracking | Weights & Biases |

@@ -1,0 +1,4 @@
+Metric,Baseline,Fine-tuned
+ROUGE-L,0.8784,0.9856
+Exact Match,0.0000,0.7540
+MMLU Overall,N/A,0.4800

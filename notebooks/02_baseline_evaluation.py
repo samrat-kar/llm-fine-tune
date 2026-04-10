@@ -142,16 +142,18 @@ plt.savefig(f"{RESULTS_DIR}/baseline_length_scatter.png", dpi=120, bbox_inches="
 plt.show()
 
 # %% [markdown]
-# ## 6. Baseline MMLU check (optional — uncomment to run)
+# ## 6. Baseline MMLU check
 #
-# Skip this if you want to save time; the same check runs after fine-tuning.
+# Evaluates general capability on 3 MMLU subjects so notebook 4 can show
+# the full catastrophic-forgetting comparison table.
 
 # %%
-# Uncomment to run:
-# from src.evaluation_utils import load_mmlu_subset, evaluate_mmlu, save_results
-# mmlu_rows = load_mmlu_subset()
-# baseline_mmlu = evaluate_mmlu(model, tokenizer, mmlu_rows, device=device)
-# save_results(baseline_mmlu, "baseline_mmlu_results.json")
+from src.evaluation_utils import load_mmlu_subset, evaluate_mmlu
+
+print("Running MMLU baseline (150 questions across 3 subjects)...")
+mmlu_rows = load_mmlu_subset()
+baseline_mmlu = evaluate_mmlu(model, tokenizer, mmlu_rows, device=device)
+save_results(baseline_mmlu, "baseline_mmlu_results.json")
 
 # %% [markdown]
 # ## Summary
