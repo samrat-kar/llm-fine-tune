@@ -46,9 +46,9 @@ LORA_TARGET_MODULES = [
 # ---------------------------------------------------------------------------
 OUTPUT_DIR = "./outputs/qlora-sql"
 NUM_TRAIN_EPOCHS = 3
-PER_DEVICE_TRAIN_BATCH_SIZE = 4
-PER_DEVICE_EVAL_BATCH_SIZE = 4
-GRADIENT_ACCUMULATION_STEPS = 4      # effective batch = 16
+PER_DEVICE_TRAIN_BATCH_SIZE = 2
+PER_DEVICE_EVAL_BATCH_SIZE = 2
+GRADIENT_ACCUMULATION_STEPS = 8      # effective batch = 16
 LEARNING_RATE = 2e-4
 LR_SCHEDULER_TYPE = "cosine"
 WARMUP_RATIO = 0.05
