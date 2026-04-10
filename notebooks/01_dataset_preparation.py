@@ -154,7 +154,7 @@ for i, row in enumerate(val_sample):
 def get_token_lengths(split_ds, sample_n=2000):
     n = min(sample_n, len(split_ds))
     subset = split_ds.select(range(n))
-    lengths = tokenizer(subset["text"], return_length=True, truncation=False)["length"]
+    lengths = tokenizer(list(subset["text"]), return_length=True, truncation=False)["length"]
     return lengths
 
 train_lengths = get_token_lengths(dataset_filtered["train"])
