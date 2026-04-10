@@ -12,7 +12,7 @@
 We fine-tune `Qwen/Qwen2.5-1.5B-Instruct` — a 1.5-billion-parameter instruction-tuned
 language model — to generate SQL queries from natural-language questions and database
 schemas. Using **QLoRA** (4-bit quantization + Low-Rank Adaptation), the fine-tuning
-runs entirely on a single consumer GPU (NVIDIA T4, 16 GB VRAM) in under three hours.
+runs on a single NVIDIA H100 80GB GPU in under 90 minutes.
 We report ROUGE-L and Exact Match improvements over the base model, and confirm that
 general-language capability is preserved via an MMLU benchmark subset.
 
@@ -180,7 +180,7 @@ Evaluation on 500 held-out examples from the validation split (seed 42):
 | **ROUGE-L** | 0.8784 | 0.9856 | **+0.1072** |
 | **Exact Match** | 0.0000 | 0.7540 | **+0.7540** |
 
-![Baseline vs fine-tuned](results/baseline_vs_finetuned.png)
+![Baseline vs fine-tuned](https://raw.githubusercontent.com/samrat-kar/llm-fine-tune/main/results/baseline_vs_finetuned.png)
 
 **ROUGE-L** measures soft token-overlap between predicted and reference SQL using the
 longest common subsequence. **Exact Match** (after lower-casing and whitespace
@@ -214,7 +214,7 @@ in **~87 minutes**. Loss was logged to Weights & Biases every 25 steps.
 | 1600 | — | 0.4312 |
 | **1800** | **0.4127** | **0.4311** |
 
-![Training loss curve](results/training_loss_curve.png)
+![Training loss curve](https://raw.githubusercontent.com/samrat-kar/llm-fine-tune/main/results/training_loss_curve.png)
 
 Key observations:
 - Training loss drops sharply in the first 150 steps (2.26 → 0.52) as the model
@@ -247,12 +247,9 @@ model's pre-training distribution. The overall 48% is consistent with published
 Qwen2.5-1.5B-Instruct MMLU scores, suggesting no meaningful capability regression
 from fine-tuning on a narrow SQL task.
 
-![MMLU comparison](results/mmlu_comparison.png)
+![MMLU comparison](https://raw.githubusercontent.com/samrat-kar/llm-fine-tune/main/results/mmlu_comparison.png)
 
 ### 4.4 Qualitative examples
-
-Below are representative examples showing the model behaviour before and after
-fine-tuning. *(Replace with actual model outputs from Notebook 4.)*
 
 The examples below are drawn from the 500-sample evaluation set and illustrate the
 qualitative difference in output style.
@@ -397,7 +394,7 @@ Model (merged weights) and model card:
 ### Experiment tracking
 
 Training run logged to Weights & Biases:
-*(add W&B project URL after training)*
+https://wandb.ai/samratkar77/ReadyTensor-FineTune/runs/esrwl3zs
 
 ---
 
