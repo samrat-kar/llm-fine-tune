@@ -186,7 +186,6 @@ training_args = TrainingArguments(
 
     # Misc
     dataloader_num_workers=0,
-    group_by_length=True,
     seed=42,
 )
 
