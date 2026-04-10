@@ -25,7 +25,7 @@ MAX_SEQ_LENGTH = 512
 # QLoRA / quantization
 # ---------------------------------------------------------------------------
 LOAD_IN_4BIT = True
-BNB_4BIT_COMPUTE_DTYPE = "float16"   # or "bfloat16" on Ampere+ GPUs
+BNB_4BIT_COMPUTE_DTYPE = "bfloat16"  # Ampere+ GPUs (A40, A100, RTX 3090+)
 BNB_4BIT_QUANT_TYPE = "nf4"
 BNB_USE_DOUBLE_QUANT = True
 
@@ -57,8 +57,8 @@ MAX_GRAD_NORM = 1.0
 LOGGING_STEPS = 25
 EVAL_STEPS = 100
 SAVE_STEPS = 100
-FP16 = True                           # set False and BF16=True on Ampere GPUs
-BF16 = False
+FP16 = False                          # Ampere+ GPUs (A40, A100, RTX 3090+) use BF16
+BF16 = True
 
 # ---------------------------------------------------------------------------
 # Weights & Biases
