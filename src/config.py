@@ -70,7 +70,7 @@ WANDB_RUN_NAME = "qwen2.5-1.5b-sql-lora-r16"
 # Hugging Face Hub
 # ---------------------------------------------------------------------------
 # Set your HF username before publishing
-HF_USERNAME = "samratkar77"
+HF_USERNAME = "samrat-kar"
 HF_REPO_ID = f"{HF_USERNAME}/qwen2.5-1.5b-sql-qlora"
 ADAPTER_DIR = "./outputs/qlora-sql/final_adapter"
 

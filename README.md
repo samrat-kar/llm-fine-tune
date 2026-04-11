@@ -162,7 +162,7 @@ W&B project: https://wandb.ai/samratkar77/ReadyTensor-FineTune/runs/esrwl3zs
 
 | Field | Value |
 |-------|-------|
-| **Model name** | `samratkar77/qwen2.5-1.5b-sql-qlora` |
+| **Model name** | `samrat-kar/qwen2.5-1.5b-sql-qlora` |
 | **Base model** | `Qwen/Qwen2.5-1.5B-Instruct` |
 | **Task** | Text-to-SQL generation |
 | **Language** | English |
@@ -196,7 +196,7 @@ educational projects.
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 
-model_id = "samratkar77/qwen2.5-1.5b-sql-qlora"
+model_id = "samrat-kar/qwen2.5-1.5b-sql-qlora"
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForCausalLM.from_pretrained(
     model_id, torch_dtype=torch.float16, device_map="auto"
@@ -225,7 +225,7 @@ print(tokenizer.decode(output[0, inputs["input_ids"].shape[1]:], skip_special_to
 
 ## Links
 
-- Published model: `https://huggingface.co/samratkar77/qwen2.5-1.5b-sql-qlora`
+- Published model: `https://huggingface.co/samrat-kar/qwen2.5-1.5b-sql-qlora`
 - Dataset: `https://huggingface.co/datasets/b-mc2/sql-create-context`
 - Base model: `https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct`
 - W&B project: *(add link after training)*
