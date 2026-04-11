@@ -3,7 +3,8 @@
 
 **Tags**: `fine-tuning` `qlora` `text-to-sql` `qwen2.5` `peft` `llm` `natural-language-processing` `sql-generation` `huggingface` `transformers` `weights-and-biases` `parameter-efficient-fine-tuning` `apache-2.0`
 
-**GitHub**: https://github.com/samrat-kar/llm-fine-tune
+**GitHub**: https://github.com/samrat-kar/llm-fine-tune  
+**Model**: https://huggingface.co/samratkar77/qwen2.5-1.5b-sql-qlora
 
 ---
 
@@ -389,7 +390,7 @@ reported numbers on the same hardware (H100 80GB, CUDA 12.7).
 ### Published model
 
 Model (merged weights) and model card:
-`https://huggingface.co/samratkar77/qwen2.5-1.5b-sql-qlora`
+https://huggingface.co/samratkar77/qwen2.5-1.5b-sql-qlora
 
 ### Experiment tracking
 
