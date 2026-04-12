@@ -229,19 +229,6 @@ print(tokenizer.decode(output[0, inputs["input_ids"].shape[1]:], skip_special_to
 # Expected: SELECT COUNT(*) FROM employees WHERE department = 'sales';
 ```
 
-## License
-
-Licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) — free for non-commercial use with attribution.
-
----
-
-## Contact
-
-**Maintainer:** Samrat Kar  
-**GitHub:** [samrat-kar](https://github.com/samrat-kar)
-
----
-
 ## Reproducibility
 
 All random seeds are fixed (`seed=42`). The full pipeline is deterministic given
@@ -259,3 +246,16 @@ Expected runtime on a single T4 GPU:
 - Notebooks 1-2: ~15 minutes
 - Notebook 3 (training): ~2-3 hours
 - Notebook 4: ~20 minutes
+
+---
+
+## License
+
+Licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) — free for non-commercial use with attribution.
+
+---
+
+## Contact
+
+**Maintainer:** Samrat Kar  
+**GitHub:** [samrat-kar](https://github.com/samrat-kar)
