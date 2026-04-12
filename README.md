@@ -164,8 +164,6 @@ confirming general capability is retained.
 
 **Training loss**: 2.26 → 0.41 (train), 0.53 → 0.43 (val) over 1,800 steps / 3 epochs.
 
-W&B project: https://wandb.ai/samratkar77/ReadyTensor-FineTune/runs/esrwl3zs
-
 ## Model Card
 
 | Field | Value |
