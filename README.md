@@ -225,6 +225,7 @@ print(tokenizer.decode(output[0, inputs["input_ids"].shape[1]:], skip_special_to
 
 ## Links
 
+- Publication: [From Prose to SQL: QLoRA Fine-Tuning of Qwen2.5-1.5B](https://app.readytensor.ai/publications/from-prose-to-sql-qlora-fine-tuning-of-qwen25-15b-QDo6h0YmjV0N)
 - Published model: `https://huggingface.co/samrat-kar/qwen2.5-1.5b-sql-qlora`
 - Dataset: `https://huggingface.co/datasets/b-mc2/sql-create-context`
 - Base model: `https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct`
