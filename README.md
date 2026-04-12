@@ -3,6 +3,14 @@
 Fine-tuning `Qwen/Qwen2.5-1.5B-Instruct` for natural language → SQL generation
 using **QLoRA** (4-bit quantization + LoRA) on the `b-mc2/sql-create-context` dataset.
 
+## Links
+
+- Publication: [From Prose to SQL: QLoRA Fine-Tuning of Qwen2.5-1.5B](https://app.readytensor.ai/publications/from-prose-to-sql-qlora-fine-tuning-of-qwen25-15b-QDo6h0YmjV0N)
+- Published model: https://huggingface.co/samrat-kar/qwen2.5-1.5b-sql-qlora
+- Dataset: https://huggingface.co/datasets/b-mc2/sql-create-context
+- Base model: https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct
+- W&B report: [QLoRA Fine-Tuning of Qwen2.5-1.5B — Training Curves & Metrics](https://wandb.ai/samrat-ml/Fine-Tuning/reports/QLoRA-Fine-Tuning-of-Qwen2-5-1-5B--VmlldzoxNjQ5NDY5MA)
+
 ## Project Overview
 
 | Item | Detail |
@@ -222,14 +230,6 @@ with torch.no_grad():
 print(tokenizer.decode(output[0, inputs["input_ids"].shape[1]:], skip_special_tokens=True))
 # Expected: SELECT COUNT(*) FROM employees WHERE department = 'sales';
 ```
-
-## Links
-
-- Publication: [From Prose to SQL: QLoRA Fine-Tuning of Qwen2.5-1.5B](https://app.readytensor.ai/publications/from-prose-to-sql-qlora-fine-tuning-of-qwen25-15b-QDo6h0YmjV0N)
-- Published model: `https://huggingface.co/samrat-kar/qwen2.5-1.5b-sql-qlora`
-- Dataset: `https://huggingface.co/datasets/b-mc2/sql-create-context`
-- Base model: `https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct`
-- W&B project: *(add link after training)*
 
 ## Reproducibility
 
