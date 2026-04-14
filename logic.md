@@ -449,6 +449,187 @@ self.session.headers.update({"X-API-Key": api_key})
 
 ---
 
+---
+
+## Alerting (`deploy/server.py` — `AlertManager` class)
+
+### Library: `smtplib` + `email` (Python standard library)
+
+No third-party alerting library. Alerts are sent as emails using Python's built-in SMTP client.
+
+```python
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+```
+
+| Class / Function | Purpose |
+|---|---|
+| `MIMEMultipart()` | Creates an email container with From/To/Subject headers |
+| `MIMEText(body, "plain")` | Creates the plain-text email body |
+| `msg.attach(...)` | Attaches the body to the email container |
+| `smtplib.SMTP_SSL(host, port)` | Opens an SSL-encrypted connection to the SMTP server |
+| `smtp.login(user, password)` | Authenticates with the email provider |
+| `smtp.sendmail(from, to, msg)` | Sends the email |
+
+SMTP password is read from the `ALERT_SMTP_PASSWORD` environment variable — never hardcoded:
+```bash
+ALERT_SMTP_PASSWORD=your-app-password python deploy/server.py
+```
+
+---
+
+### AlertManager — 4 Alert Conditions
+
+#### Condition 1: High Latency
+
+**What it is:** A single `model.generate()` call takes longer than `latency_threshold_ms` (default 2000ms).
+
+**What causes it:** GPU thermal throttling, VRAM memory pressure from previous requests not being fully freed, or the model generating an unusually long output.
+
+**Flow:**
+```
+model.generate() completes
+        ↓
+latency_ms = (time.perf_counter() - t0) * 1000
+        ↓
+alert_manager.on_high_latency(latency_ms, client_ip)
+        ↓
+if latency_ms > 2000ms → send email
+```
+
+**State tracked:** None — fires on every request that exceeds the threshold (subject to cooldown).
+
+---
+
+#### Condition 2: Consecutive Inference Errors
+
+**What it is:** `model.generate()` raises an exception 3 times in a row with no successful generation in between.
+
+**What "consecutive" means exactly:**
+- Request 1: `model.generate()` raises `torch.cuda.OutOfMemoryError` → counter = 1
+- Request 2: `model.generate()` raises `RuntimeError: CUDA error` → counter = 2
+- Request 3: `model.generate()` raises `RuntimeError: expected scalar type` → counter = 3 → **alert fires**
+
+If any request succeeds, the counter resets to 0:
+- Request 1: fails → counter = 1
+- Request 2: succeeds → counter = **0** (reset)
+- Request 3: fails → counter = 1 (starts over)
+
+**What causes it:**
+- `torch.cuda.OutOfMemoryError` — GPU ran out of VRAM (e.g. concurrent requests filling memory)
+- `RuntimeError` from transformers — invalid tensor shape, quantization error
+- Any unhandled exception inside the `torch.no_grad()` block
+
+**Does NOT include:** wrong API keys, rate limit hits, missing headers — those are rejected before `model.generate()` is ever called.
+
+**Flow:**
+```python
+try:
+    with torch.no_grad():
+        output_ids = model.generate(...)
+    alert_manager.on_inference_success()   # resets counter to 0
+except Exception as e:
+    alert_manager.on_inference_error(e, client_ip)  # increments counter
+    raise HTTPException(status_code=500, ...)
+```
+
+**State tracked:** `_consecutive_errors: int` — single integer, incremented on failure, reset to 0 on success.
+
+---
+
+#### Condition 3: Auth Brute Force
+
+**What it is:** The same client IP sends a wrong API key 5 times. Signals a credential-stuffing or brute-force attack.
+
+**What "wrong API key" means:** The `X-API-Key` header is present but does not match the `API_KEY` environment variable. Does NOT include missing header (401) — only wrong key (403).
+
+**Flow:**
+```
+Request arrives with X-API-Key: "wrong-key"
+        ↓
+verify_api_key() → api_key != API_KEY
+        ↓
+alert_manager.on_auth_failure(client_ip)
+        ↓
+_auth_failures[client_ip] += 1
+        ↓
+if count >= 5 → send email
+```
+
+Counter resets to 0 when the same IP sends a **correct** key:
+```python
+def on_auth_success(self, client_ip: str) -> None:
+    self._auth_failures[client_ip] = 0
+```
+
+**State tracked:** `_auth_failures: defaultdict(int)` — one counter per IP, never expires (persists for server lifetime).
+
+---
+
+#### Condition 4: Rate Abuse
+
+**What it is:** The same IP is rate-limited (hits 429) 5 or more times within a 5-minute window. A single 429 is normal (accidental burst); repeated 429s signal sustained automated abuse.
+
+**Flow:**
+```
+check_rate_limit() → limit exceeded → HTTP 429
+        ↓
+alert_manager.on_rate_breach(client_ip)
+        ↓
+append timestamp to _rate_breaches[client_ip] deque
+drop timestamps older than rate_breach_window_seconds
+        ↓
+if len(deque) >= 5 → send email
+```
+
+**State tracked:** `_rate_breaches: defaultdict(deque)` — one sliding-window deque per IP, same pattern as the rate limiter itself.
+
+---
+
+### Cooldown — Preventing Email Flooding
+
+Every alert type has a shared `cooldown_seconds` (default 300s / 5 min). Once an alert fires, the same alert type is suppressed until the cooldown expires:
+
+```python
+def _cooldown_ok(self, alert_type: str) -> bool:
+    last = self._last_sent.get(alert_type, 0)
+    return (time.time() - last) >= self.cooldown_seconds
+
+def _send_email(self, subject, body, alert_type):
+    if not self._cooldown_ok(alert_type):
+        logger.info(f"[ALERT cooldown active for '{alert_type}']")
+        return
+    # ... send email ...
+    self._last_sent[alert_type] = time.time()
+```
+
+Alert types are keyed as strings — `"high_latency"`, `"inference_error"`, `"auth_failure_{ip}"`, `"rate_abuse_{ip}"`. Per-IP keys mean a new IP brute-forcing gets its own cooldown timer.
+
+---
+
+### Configuration (`config/model_config.yaml`)
+
+```yaml
+alerting:
+  enabled: false
+  smtp_host: "smtp.gmail.com"
+  smtp_port: 465
+  smtp_user: "your-email@gmail.com"
+  alert_from: "your-email@gmail.com"
+  alert_to: "your-email@gmail.com"
+  cooldown_seconds: 300
+  latency_threshold_ms: 2000
+  consecutive_error_limit: 3
+  auth_failure_limit: 5
+  rate_breach_limit: 5
+  rate_breach_window_seconds: 300
+```
+
+Set `enabled: true` and set `ALERT_SMTP_PASSWORD` env var to activate.
+
+---
+
 ### 6. Rate Limiting — Sliding Window per Client IP
 
 Limits each client IP to `N` requests per `W` seconds using an in-memory sliding window.
